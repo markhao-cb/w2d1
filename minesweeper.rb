@@ -59,7 +59,13 @@ class Tile
     case status
     when :hidden
       '*'
-    when :
+    when :interior
+      '_'
+    when :flagged
+      'F'
+    else
+      status.to_s
+    end
   end
 
   def reveal
