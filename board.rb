@@ -4,9 +4,9 @@ class Board
 
   def initialize(size, num_bombs)
     @bomb_positions = []
-    populate_grid(size, num_bombs)
     @size = size
     @num_bombs = num_bombs
+    populate_grid(size, num_bombs)
   end
 
   def [](row, col)
@@ -24,6 +24,16 @@ class Board
     positions.all? do |pos|
       self[*pos].revealed?
     end
+  end
+
+  def over?
+    return true if self.board.won?
+    grid.each_with_index do |row, row_index|
+      row.each_index do |col_index|
+        return true if self[row_index,col_index].status == :bombed
+      end
+    end
+    false
   end
 
   def render
@@ -49,34 +59,34 @@ class Board
 
   private
 
-    def populate_grid(size, num_bombs)
-      @grid = Array.new(size) { Array.new(size) { nil } }
-      (0...size).each do |row|
-        (0...size).each do |col|
-          self[row, col] = Tile.new(self, false, [row, col])
-        end
-      end
-
-      set_bomb_positions(num_bombs)
-    end
-
-    def set_bomb_positions(num_bombs)
-      position_array = get_all_positions
-      num_bombs.times do
-        position_array = position_array.shuffle
-        new_bomb_position = position_array.shift
-        self[*new_bomb_position].bomb = true
-        @bomb_positions << new_bomb_position
+  def populate_grid(size, num_bombs)
+    @grid = Array.new(size) { Array.new(size) { nil } }
+    (0...size).each do |row|
+      (0...size).each do |col|
+        self[row, col] = Tile.new(self, false, [row, col])
       end
     end
 
-    def get_all_positions
-      position_array = []
-      @grid.each_with_index do |row, row_index|
-        row.each_with_index do |col, col_index|
-          position_array << [row_index, col_index]
-        end
-      end
-      position_array
+    set_bomb_positions(num_bombs)
+  end
+
+  def set_bomb_positions(num_bombs)
+    position_array = get_all_positions
+    num_bombs.times do
+      position_array = position_array.shuffle
+      new_bomb_position = position_array.shift
+      self[*new_bomb_position].bomb = true
+      @bomb_positions << new_bomb_position
     end
+  end
+
+  def get_all_positions
+    position_array = []
+    @grid.each_with_index do |row, row_index|
+      row.each_with_index do |col, col_index|
+        position_array << [row_index, col_index]
+      end
+    end
+    position_array
+  end
 end

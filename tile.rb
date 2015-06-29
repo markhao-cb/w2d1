@@ -49,26 +49,26 @@ class Tile
 
   private
 
-    def neighbors
-      neighbor_array = []
+  def neighbors
+    neighbor_array = []
 
-      NEIGHBOR_POSITIONS.each do |position|
-        x = self.pos[0]+position[0]
-        y = self.pos[1]+position[1]
-        if x.between?(0,(self.board.size - 1)) && y.between?(0, (self.board.size - 1))
-          neighbor_array << self.board[x,y]
-        end
-      end
-
-      neighbor_array
-    end
-
-    def colorize_string(str)
-      case str
-      when "1" then str.colorize(:blue)
-      when "2" then str.colorize(:green)
-      when "3" then str.colorize(:red)
-      else str
+    NEIGHBOR_POSITIONS.each do |position|
+      x = self.pos[0] + position[0]
+      y = self.pos[1] + position[1]
+      if [x,y].all? {|el| el.between?(0,(self.board.size - 1)) }
+        neighbor_array << self.board[x,y]
       end
     end
+
+    neighbor_array
+  end
+
+  def colorize_string(str)
+    case str
+    when "1" then str.colorize(:blue)
+    when "2" then str.colorize(:green)
+    when "3" then str.colorize(:red)
+    else str
+    end
+  end
 end
