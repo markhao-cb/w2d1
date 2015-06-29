@@ -1,4 +1,6 @@
 class Board
+  attr_reader :bomb_positions
+
   def initialize(size, num_bombs)
     populate_grid(size, num_bombs)
   end
@@ -24,16 +26,29 @@ class Board
   end
 
   def set_bomb_positions(num_bombs)
-    position_array = []
+    @bomb_positions = []
     @grid.each_with_index do |row, row_index|
       row.each_with_index do |col, col_index|
-        position_array << [row_index, col_index]
+        @bomb_positions << [row_index, col_index]
       end
     end
 
     num_bombs.times do
       new_bomb_position = position_array.shuffle.shift
       self[*new_bomb_position].bomb = true
+    end
+  end
+
+  def won?
+    positions = []
+    (0...size).each do |row|
+      (0...size).each do |col|
+        positions << [row, col] unless bomb_positions.include?([row, col])
+      end
+    end
+
+    positions.all? do |pos|
+      self[*pos].status != :flagged && self[*pos].status != :hidden }
     end
   end
 
@@ -112,7 +127,10 @@ class Game
 
   def play
     board.render
+    until over?
+      input = get_input
 
+    end
   end
 
   def get_input
@@ -125,10 +143,6 @@ class Game
       col = gets.chomp.to_i
     end
 
-    until valid_position?(col)
-
-    end
-
     until valid_move?(type)
       puts "Enter 'r' or 'f' to reveal or flag the position."
       type = gets.chomp.downcase
@@ -137,9 +151,6 @@ class Game
     [[row, col], type]
   end
 
-  def revealed?(pos)
-
-  end
   def valid_position?(input)
     input.each do |el|
       return false unless el.is_a?(Integer) && el.between?(0, 8)
@@ -150,4 +161,16 @@ class Game
   def valid_move?(input)
     input == 'r' || input == 'f'
   end
+
+  def over?
+    self.board.grid.each_with_index do |row, row_index|
+      row.each_with_index do |col, col_index|
+        return true if self.board.grid[row_index,col_index].status == :bombed
+        return true if self.board.won?
+      end
+    end
+    
+    false
+  end
+
 end
