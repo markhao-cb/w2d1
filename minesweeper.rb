@@ -11,6 +11,9 @@ class Game
   def play
     until over?
       board.render
+      if save?
+        return
+      end
       input = get_input
       make_move(input)
     end
@@ -48,6 +51,24 @@ class Game
       end
 
       false
+    end
+
+    def save?
+      answer = nil
+      until valid_save_input?(answer)
+        puts "Save and quit? (y/n)"
+        answer = gets.chomp.downcase
+      end
+
+      if answer == 'n'
+        return false
+      else
+        puts "What's the filename?"
+        file_name = gets.chomp.downcase
+        data = self.to_yaml
+        File.open("#{file_name}.yml", 'w') { |f| f.puts data }
+        return true
+      end
     end
 
     def get_input
@@ -90,6 +111,10 @@ class Game
 
     def valid_move?(input)
       input == 'r' || input == 'f'
+    end
+
+    def valid_save_input?(input)
+      input == 'y' || input == 'n'
     end
 end
 
