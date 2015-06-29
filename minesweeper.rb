@@ -1,5 +1,5 @@
 class Board
-  def initialize(size,num_bombs)
+  def initialize(size, num_bombs)
     populate_grid(size, num_bombs)
   end
 
@@ -97,11 +97,57 @@ class Tile
     neighbor_array
   end
 
-  def neighbor_bomb_count
-
+  def revealed?
+    self.status != :hidden && self.status != :flagged
   end
+
 end
 
 class Game
+  attr_reader :board
 
+  def initialize(size, num_bombs)
+    @board = Board.new(size, num_bombs)
+  end
+
+  def play
+    board.render
+
+  end
+
+  def get_input
+    row, col, type = nil, nil, nil
+
+    until valid_position?([row,col])
+      puts "Enter a row."
+      row = gets.chomp.to_i
+      puts "Enter a column."
+      col = gets.chomp.to_i
+    end
+
+    until valid_position?(col)
+
+    end
+
+    until valid_move?(type)
+      puts "Enter 'r' or 'f' to reveal or flag the position."
+      type = gets.chomp.downcase
+    end
+
+    [[row, col], type]
+  end
+
+  def revealed?(pos)
+
+  end
+  def valid_position?(input)
+    input.each do |el|
+      return false unless el.is_a?(Integer) && el.between?(0, 8)
+    end
+    !self.board[input].revealed?
+  end
+
+  def valid_move?(input)
+    input == 'r' || input == 'f'
+  end
 end
