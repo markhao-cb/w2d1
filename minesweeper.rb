@@ -63,10 +63,15 @@ class Tile
   end
 
   def reveal
-    if !@bomb
-      @status = :revealed
-    else
+    if @bomb
       @status = :bombed
+    else
+      if neighbors.none? {|neighbor| neighbor.bomb}
+        neighbors.each {|neighbor| neighbor.reveal}
+        self.status = :interior
+      else
+        self.status = neighbors.select { |neighbor| neighbor.bomb }.count
+      end
     end
   end
 
@@ -77,7 +82,11 @@ class Tile
   def neighbors
     neighbor_array = []
     Neighbor_positions.each do |position|
-      neighbor_array << self.board[(self.pos[0]+position[0]), (self.pos[1]+position[1])]
+      x = self.pos[0]+position[0]
+      y = self.pos[1]+position[1]
+      if x.between?(0,self.board.size) && y.between(0,self.board.size)
+        neighbor_array << self.board[x,y]
+      end
     end
     neighbor_array
   end
