@@ -59,7 +59,7 @@ class Board
 end
 
 class Tile
-  attr_reader :status
+  attr_writer :status
 
   Neighbor_positions = [[-1,-1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1]]
 
@@ -133,6 +133,18 @@ class Game
     end
   end
 
+  def make_move(input)
+    row, col = input[0]
+    type = input[1]
+
+    tile = self.board[row, col]
+    if type == 'r'
+      tile.reveal
+    elsif type == 'f'
+      tile.status = tile.status == :flagged ? :hidden : :flagged
+    end
+  end
+
   def get_input
     row, col, type = nil, nil, nil
 
@@ -169,7 +181,7 @@ class Game
         return true if self.board.won?
       end
     end
-    
+
     false
   end
 
