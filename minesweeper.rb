@@ -107,5 +107,26 @@ class Game
   end
 end
 
-game = Game.new(9,10)
-game.play
+def valid_input?(input)
+  input == 'l' || input == 'n'
+end
+
+if __FILE__ == $PROGRAM_NAME
+  answer = nil
+  until valid_input?(answer)
+    puts "New game or load game? (n / l)."
+    answer = gets.chomp.downcase
+    if answer == "n"
+      game = Game.new(9,10)
+    elsif answer == "l"
+      puts "Please enter the filename: "
+      filename = gets.chomp
+      filename = "#{filename}.yml"
+      data = File.read(filename)
+      game = YAML.load(data)
+    else
+      puts "Invalid input."
+    end
+  end
+  game.play
+end
