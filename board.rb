@@ -27,7 +27,7 @@ class Board
   end
 
   def over?
-    return true if self.board.won?
+    return true if self.won?
     grid.each_with_index do |row, row_index|
       row.each_index do |col_index|
         return true if self[row_index,col_index].status == :bombed
