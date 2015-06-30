@@ -33,6 +33,8 @@ class Tile
   def reveal
     if @bomb
       @status = :bombed
+    elsif self.status == :flagged
+      puts "You have to unflag this position to reveal."
     else
       if neighbors.none? {|neighbor| neighbor.bomb}
         self.status = :interior

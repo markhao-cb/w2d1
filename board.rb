@@ -1,11 +1,15 @@
-require 'byebug'
+require_relative 'tile'
+require 'io/console'
+
 class Board
-  attr_reader :bomb_positions, :grid ,:size
+  attr_reader :bomb_positions, :grid ,:size, :num_bombs
+  attr_accessor :selected_pos
 
   def initialize(size, num_bombs)
     @bomb_positions = []
     @size = size
     @num_bombs = num_bombs
+    @selected_pos = [0,0]
     populate_grid(size, num_bombs)
   end
 
@@ -37,16 +41,24 @@ class Board
   end
 
   def render
-    print "  "
-    size.times {|i| print "#{i} "}
-    puts
+    puts "Bombs remaining: #{num_bombs - num_flags}"
+    col_num_string = ""
+    size.times {|i| col_num_string << "#{i} "}
+    puts "  #{col_num_string}"
     self.grid.each_with_index do |row, row_index|
-      print "#{row_index} "
+      row_str = "#{row_index} "
       row.each_with_index do |col, col_index|
-        print "#{self[row_index,col_index]} "
+        row_str << "#{self[row_index,col_index]} "
       end
-      puts
+      puts row_str
     end
+  end
+
+  def num_flags
+    num = 0
+    position_array = get_all_positions
+    position_array.each {|pos| num += 1 if self[*pos].status == :flagged}
+    num
   end
 
   def reveal(won)
@@ -89,4 +101,5 @@ class Board
     end
     position_array
   end
+
 end
